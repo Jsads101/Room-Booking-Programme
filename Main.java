@@ -40,27 +40,32 @@ while (mainMenu) {
   System.out.println("2: View all Rooms.");
   System.out.println("3: Find bookings from customer name.");
 Scanner input = new Scanner(System.in);
-String userInput = input.next();
-int x;
+int userInput = input.nextInt();
+if (userInput >= 1 && userInput <= 3){
 switch (userInput) {
-    case "1":
+    case 1:
      Room.createBooking(uniRooms, confirmedBookings);
      //System.out.println(confirmedBookings);
         break;
-    case "2":
+    case 2:
     Room.viewAllRooms(uniRooms);
         break;
-    case "3":
+    case 3:
     Bookings.returnBookings(confirmedBookings);
 }
+} else {
+  System.out.println("Sorry, that input is not recognised");
+}
 System.out.println("Would you like to chose another option? Type 1 for Yes and 2 for No");
-Scanner nextInput = new Scanner(System.in);
-if (input.nextInt() == 1) {
+int nextInput = input.nextInt();
+if (nextInput == 1){
  mainMenu = true;
- } else {
+ }
+ if (nextInput ==2) {
 System.out.println("Thankyou.Goodbye");
 mainMenu = false;
-
+} else {
+  System.out.println ("Nope");
 }
 }
 

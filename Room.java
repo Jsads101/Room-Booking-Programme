@@ -47,8 +47,8 @@ public static boolean isAvailable(String roomName, String requestedDate, String 
 
 public static void createBooking(Room[] uniRooms, ArrayList<Bookings> confirmedBookings){
 int x;
-boolean validGroupSize = true;
-while (validGroupSize){
+boolean takeRequirements = true;
+while (takeRequirements){
 Scanner input = new Scanner(System.in);
 System.out.println("Please enter the date of your booking in 6 digit form. e.g. dd/mm/yy");
 String requestedDate = input.next();
@@ -59,7 +59,7 @@ int requestedGroupSize = input.nextInt();
 
 if (requestedGroupSize > 70){
   System.out.println("Sorry, we dont have any rooms the are big enough for your group size.");
-  validGroupSize = false;
+  takeRequirements = false;
 }
 else if (requestedGroupSize<=70){
 System.out.println("If we have rooms that meet your criteria they will be listed below.");
@@ -105,6 +105,7 @@ Bookings newBooking = new Bookings(requestedRoomName, requestedDate, requestedTi
 confirmedBookings.add(newBooking);
 System.out.println("Thankyou for your booking. Your booking details are confirmed below:");
 System.out.println(newBooking.toString());
+takeRequirements=false;
 }
 }
 }
