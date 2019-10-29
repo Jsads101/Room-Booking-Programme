@@ -47,6 +47,8 @@ public static boolean isAvailable(String roomName, String requestedDate, String 
 
 public static void createBooking(Room[] uniRooms, ArrayList<Bookings> confirmedBookings){
 int x;
+boolean validGroupSize = true;
+while (validGroupSize){
 Scanner input = new Scanner(System.in);
 System.out.println("Please enter the date of your booking in 6 digit form. e.g. dd/mm/yy");
 String requestedDate = input.next();
@@ -54,8 +56,15 @@ System.out.println("Please enter the time of your booking using 24hour clock eg 
 String requestedTime = input.next();
 System.out.println("Please enter the number of people in your group (maximum 70)");
 int requestedGroupSize = input.nextInt();
+
+if (requestedGroupSize > 70){
+  System.out.println("Sorry, we dont have any rooms the are big enough for your group size.");
+  validGroupSize = false;
+}
+else if (requestedGroupSize<=70){
 System.out.println("If we have rooms that meet your criteria they will be listed below.");
 for (x=0; x < uniRooms.length; x++){
+
 if((Room.isAvailable(uniRooms[x].getRoomName(), requestedDate, requestedTime, confirmedBookings)) && (requestedGroupSize <= uniRooms[x].getCapacity())){
 System.out.println("Room Number: " + x + " " + uniRooms[x].getRoomName() + " is Available.");
 }
@@ -67,7 +76,7 @@ switch (requestedRoomName) {
      requestedRoomName = "Taff";
         break;
     case "1":
-    requestedRoomName = "LLangorse";
+    requestedRoomName = "Llangorse";
         break;
     case "2":
     requestedRoomName = "Pen Y Fan";
@@ -94,5 +103,9 @@ switch (requestedRoomName) {
     String customerName = input.next();
 Bookings newBooking = new Bookings(requestedRoomName, requestedDate, requestedTime, customerName, requestedGroupSize);
 confirmedBookings.add(newBooking);
+System.out.println("Thankyou for your booking. Your booking details are confirmed below:");
+System.out.println(newBooking.toString());
+}
+}
 }
 }

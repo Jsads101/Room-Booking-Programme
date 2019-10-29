@@ -82,6 +82,7 @@ public static void returnBookings(ArrayList<Bookings> bookingArray){
           System.out.println("Sorry, there are no bookings under that name");
  }
 }
+}
 
 
 
@@ -122,62 +123,4 @@ public static void returnBookings(ArrayList<Bookings> bookingArray){
          timeCorrect = true;
      } catch (ParseException e) {
          System.out.println("Time " + userTime + " is not valid. Please try again using 24hour clock pattern e.g. 1300");
-           }
-         }
-     System.out.println("Please enter the number of people in your group");
-     int groupSize = input.nextInt();
-     System.out.println("Please enter your name with no spaces");
-     String personName = input.next();
-     personName = personName.toLowerCase();
-     Bookings potentialBooking = new Bookings(userDate, userTime, personName, groupSize);
-     System.out.println(potentialBooking.toString());
-   }*/
-
-
-
-//IGNORE - TYRING TO FIGURE OUT AVAILABILITY
-/*public static void isAvailable(Room[] roomArray, ArrayList<Bookings> bookingArray, Room roomObject){
-
-int x;
-
-for (x=0; x< bookingArray.size(); x++){
-if (roomObject.getRoomName() != bookingArray.get(x).getRoomName() && bookingArray.get(x).getDate()
-!= potentialBooking.getDate() && bookingArray.get(x).getTime() != potentialBooking.getTime()){
-
-}
-}
-  return true;
-}
-
-ArrayList<String> unavailableAtTime = new ArrayList<String>();
-ArrayList<Room> availableAtTime = new ArrayList<Room>();
-    int x;
-    String y = null;
-    System.out.println("Unavailable rooms: ");
-    for (x=0; x < bookingArray.size(); x++){
-           if (potentialBooking.getTime() != bookingArray.get(x).getTime() &&
-               potentialBooking.getDate().equals(bookingArray.get(x).getDate())){
-               y = bookingArray.get(x).getRoomName();
-               unavailableAtTime.add(y);
-                }
-              }
-            System.out.println(unavailableAtTime);
-            System.out.println("Available Rooms: ");
-
-            for (Room roomArray.getRoomName(): roomArray){
-              if (unavailableAtTime.contains(roomArray.getRoomName())){
-                System.out.println(roomArray.getRoomName());
-              }
-            }
-            for (x = 0; x <= roomArray.length; x++){
-              for (x=0; x < unavailableAtTime.size(); x++){
-                if (roomArray[x].getRoomName() != unavailableAtTime){
-                availableAtTime.add(roomArray[x]);
-              }
-            }
-          }*/
-          //System.out.println(availableAtTime);
-
-
-
-}
+       }*/

@@ -34,7 +34,6 @@ public static void main(String[] args){
   uniRooms[8] = snowdon;
 
 boolean mainMenu = true;
-
 while (mainMenu) {
   System.out.println("Welcome to the University Room Booking System. Please choose from the options below.");
   System.out.println("1: Book A New Room.");
@@ -56,11 +55,12 @@ switch (userInput) {
 }
 System.out.println("Would you like to chose another option? Type 1 for Yes and 2 for No");
 Scanner nextInput = new Scanner(System.in);
-if (nextInput.nextInt() == 1) {
-mainMenu = true;
-} else if (nextInput.nextInt() == 2){
+if (input.nextInt() == 1) {
+ mainMenu = true;
+ } else {
 System.out.println("Thankyou.Goodbye");
 mainMenu = false;
+
 }
 }
 
