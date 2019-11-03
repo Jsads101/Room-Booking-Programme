@@ -100,11 +100,14 @@ public class Booking {
     boolean takeRequirements = true;
     Scanner input = new Scanner(System.in);
     String requestedDate = null;
+
+    //taking user requirements
     while (takeRequirements) {
         boolean dateIsValid = false;
         while (!dateIsValid){
             System.out.println("Please enter a valid date in the format dd/mm/yyyy)");
-        requestedDate = input.nextLine(); //Need to add user validation
+        requestedDate = input.nextLine();
+        //Checking date is entered correctly and catching parse exceptions:
         Date date = null;
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -125,8 +128,25 @@ public class Booking {
     }
        
        
-    System.out.println("Please enter the time of your booking using 24hour clock eg 1300");
-      String requestedTime = input.next();//Need to add uservalidation
+    boolean timeIsValid = false;
+    String requestedTime = null;
+        while (!timeIsValid){
+            System.out.println("Please enter a valid time in 24 hour format eg 1300");
+        requestedTime = input.nextLine();
+        //Checking date is entered correctly and catching parse exceptions:
+        Date time = null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+            time = sdf.parse(requestedTime);
+            if (requestedTime.equals(sdf.format(time))) {
+                System.out.println(requestedTime + " is a valid time");
+                timeIsValid = true;
+            }
+        } catch (ParseException ex) {
+            System.out.println("Time is not valid. Please try again");
+            timeIsValid = false;
+        }
+    }
       System.out.println("Please enter the number of people in your group (maximum 70)");
       int requestedGroupSize = input.nextInt();//Need to add user validation
 
@@ -186,4 +206,7 @@ public class Booking {
     } //**********Need to close scanner at end of method
   }
 }
+
+
+
 
