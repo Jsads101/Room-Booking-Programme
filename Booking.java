@@ -8,6 +8,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 public class Booking {
 
@@ -87,19 +91,44 @@ public class Booking {
     return true;
   }
 
+  
+
   //Method which takes in user criteria, provides a list of available rooms and allows user to chose a room to make a booking. 
   //Booking is then added to confirmedBooking ArrayList for temporary storage. 
   public static void createBooking(Room[] uniRooms, ArrayList<Booking> confirmedBookings) {
     int x;
     boolean takeRequirements = true;
     Scanner input = new Scanner(System.in);
+    String requestedDate = null;
     while (takeRequirements) {
-      System.out.println("Please enter the date of your booking in 6 digit form. e.g. dd/mm/yy");
-      String requestedDate = input.next();
+        boolean dateIsValid = false;
+        while (!dateIsValid){
+            System.out.println("Please enter a valid date in the format dd/mm/yyyy)");
+        requestedDate = input.nextLine(); //Need to add user validation
+        Date date = null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            date = sdf.parse(requestedDate);
+            Date todaysDate = new Date();
+            if (date.before(todaysDate)){
+                System.out.println("You can only make bookings for dates from tomorrow");
+                dateIsValid = false;
+            }
+            else if (requestedDate.equals(sdf.format(date))) {
+                System.out.println(requestedDate + " is a valid date");
+                dateIsValid = true;
+            }
+        } catch (ParseException ex) {
+            System.out.println("Date is not valid. Please try again");
+            dateIsValid = false;
+        }
+    }
+       
+       
     System.out.println("Please enter the time of your booking using 24hour clock eg 1300");
-      String requestedTime = input.next();
+      String requestedTime = input.next();//Need to add uservalidation
       System.out.println("Please enter the number of people in your group (maximum 70)");
-      int requestedGroupSize = input.nextInt();
+      int requestedGroupSize = input.nextInt();//Need to add user validation
 
       if (requestedGroupSize > 70) {
         System.out.println("Sorry, we dont have any rooms that are big enough for your group size.");
@@ -158,21 +187,3 @@ public class Booking {
   }
 }
 
-
-
-/*
- * Scanner input = new Scanner(System.in); DateFormat format = new
- * SimpleDateFormat("dd/MM/yy"); format.setLenient(false); System.out.
- * println("Please enter the date of your booking in 6 digit form. e.g. dd/mm/yy"
- * ); boolean dateCorrect = false; String userDate = null; while (!dateCorrect){
- * try { userDate = input.next(); format.parse(userDate); dateCorrect = true; }
- * catch (ParseException e) { System.out.println("Date " + userDate +
- * " is not valid according to " + ((SimpleDateFormat) format).toPattern() +
- * " pattern. Please try again"); } } DateFormat formatTime = new
- * SimpleDateFormat("kkmm"); formatTime.setLenient(false); System.out.
- * println("Please enter the time of your booking using 24hour clock eg 1300");
- * boolean timeCorrect = false; String userTime = null; while (!timeCorrect){
- * try { userTime = input.next(); formatTime.parse(userTime); timeCorrect =
- * true; } catch (ParseException e) { System.out.println("Time " + userTime +
- * " is not valid. Please try again using 24hour clock pattern e.g. 1300"); }
- */
