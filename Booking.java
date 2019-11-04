@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import java.time.format.DateTimeParseException;
+import java.time.LocalTime;
 
 public class Booking {
 
@@ -43,7 +45,7 @@ public class Booking {
 
   }
 
-  //Booking Constructor
+  // Booking Constructor
   public Booking(String room, String date, String time, String personName, int groupSize) {
     this.room = room;
     this.date = date;
@@ -52,13 +54,11 @@ public class Booking {
     this.groupSize = groupSize;
   }
 
-
-  //Overiding the toString() method for printing out Booking objects.
+  // Overiding the toString() method for printing out Booking objects.
   public String toString() {
     return "Room Name: " + room + ", Date: " + date + ", Time: " + time + ", Name of Customer: " + personName
         + ", Group Size: " + groupSize + ".";
   }
-
 
   // METHOD TO RETURN BOOKINGS BY CUSTOMER NAME - method called from Main.java
   public static void returnBookings(ArrayList<Booking> bookingArray) {
@@ -83,8 +83,8 @@ public class Booking {
     }
   }
 
-
-  // Helper Method for createBooking Method which returns whether a specific room is avilable at a specific time and date.
+  // Helper Method for createBooking Method which returns whether a specific room
+  // is avilable at a specific time and date.
   public static boolean isAvailable(String roomName, String requestedDate, String requestedTime,
       ArrayList<Booking> bookingArray) {
     int x;
@@ -97,8 +97,11 @@ public class Booking {
     return true;
   }
 
-  /*Method which takes in user criteria, provides a list of available rooms and allows user to chose a room to make a booking.
-  Booking is then added to confirmedBooking ArrayList for temporary storage.*/
+  /*
+   * Method which takes in user criteria, provides a list of available rooms and
+   * allows user to chose a room to make a booking. Booking is then added to
+   * confirmedBooking ArrayList for temporary storage.
+   */
   public static void createBooking(Room[] uniRooms, ArrayList<Booking> confirmedBookings) {
     int x;
     boolean takeRequirements = true;
@@ -106,38 +109,33 @@ public class Booking {
     String requestedDate = null;
 
     while (takeRequirements) {
-      
-      //Taking date requirement.
+
+      // Taking date requirement.
       boolean dateIsValid = false;
       while (!dateIsValid) {
-        System.out.println("Please enter a valid date in the format dd/mm/yyyy");
+        System.out.println("Please enter a valid date in the format dd/mm/yy");
         requestedDate = input.nextLine();
-
-        // Checking date is entered correctly and catching parse exceptions:
-        Date date = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        sdf.setLenient(false);
         try {
-          date = sdf.parse(requestedDate);
-          Date todaysDate = new Date();
-          if (date.before(todaysDate)) {
+          DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");
+          LocalDate localDate = LocalDate.parse(requestedDate, dtf);
+          System.out.println("Input String with value: " + requestedDate);
+          System.out.println("Converted Date in default ISO format: " + localDate);
+          LocalDate todaysDate = LocalDate.now();
+	        System.out.println(dtf.format(todaysDate));
+          if (localDate.isBefore(todaysDate)) {
             System.out.println("You can only make bookings for dates from tomorrow");
             dateIsValid = false;
-          } else if (!requestedDate.matches("\\d{2}/\\d{2}/\\d{4}")) {
-            System.out.println("Date is not valid. Please try again");
-            dateIsValid = false;
-          } else if (requestedDate.equals(sdf.format(date))) {
+          } else if (requestedDate.equals(dtf.format(localDate))) {
             System.out.println(requestedDate + " is a valid date");
             dateIsValid = true;
           }
-        } catch (ParseException ex) {
+        } catch (DateTimeParseException ex) {
           System.out.println("Date is not valid. Please try again");
           dateIsValid = false;
         }
       }
-      
 
-      //Taking time requirement.
+      // Taking time requirement.
       boolean timeIsValid = false;
       String requestedTime = null;
       while (!timeIsValid) {
@@ -146,25 +144,28 @@ public class Booking {
         requestedTime = input.nextLine();
 
         // Checking time is entered correctly and catching parse exceptions:
-        Date time = null;
+        
         try {
-          SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
-          time = sdf.parse(requestedTime);
-          if (requestedTime.equals(sdf.format(time))) {
+          DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HHmm");
+          LocalTime localTime = LocalTime.parse(requestedTime, dtf);
+          System.out.println("Input String with value: " + requestedTime);
+          System.out.println("Converted Time in default ISO format: " + localTime);
+          if (requestedTime.equals(dtf.format(localTime))) {
             System.out.println(requestedTime + " is a valid time");
             timeIsValid = true;
           }
-        } catch (ParseException ex) {
+        } catch (DateTimeParseException ex) {
           System.out.println("Time is not valid. Please try again");
           timeIsValid = false;
         }
       }
-      
-      //Taking group size requirement.
+
+      // Taking group size requirement.
       System.out.println("Please enter the number of people in your group (maximum 70)");
       int requestedGroupSize = input.nextInt();
 
-      //Checking if any rooms are big enough for group size. Printing all avaialable rooms that are big enough. 
+      // Checking if any rooms are big enough for group size. Printing all avaialable
+      // rooms that are big enough.
       if (requestedGroupSize > 70) {
         System.out.println("Sorry, we dont have any rooms that are big enough for your group size.");
         takeRequirements = false;
@@ -178,7 +179,7 @@ public class Booking {
           }
         }
 
-        //Taking final requirements - which room and customer name. 
+        // Taking final requirements - which room and customer name.
         System.out.println("Please type in the room number you would like to book:");
         String requestedRoomName = input.next();
         switch (requestedRoomName) {
@@ -213,7 +214,8 @@ public class Booking {
         String customerName = input.next();
         customerName = customerName.toLowerCase();
 
-        //Creates new Booking object from customer requirements and prints out to customer.
+        // Creates new Booking object from customer requirements and prints out to
+        // customer.
         Booking newBooking = new Booking(requestedRoomName, requestedDate, requestedTime, customerName,
             requestedGroupSize);
         confirmedBookings.add(newBooking); // Adds new Booking object to confirmedBookings array.
