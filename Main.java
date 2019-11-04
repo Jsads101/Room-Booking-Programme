@@ -10,8 +10,9 @@ public class Main {
 
   public static void main(String[] args) {
 
-    Room[] uniRooms = new Room[9];
-    ArrayList<Booking> confirmedBookings = new ArrayList<Booking>();
+    Room[] uniRooms = new Room[9]; //Array for list of rooms.
+    ArrayList<Booking> confirmedBookings = new ArrayList<Booking>(); // Array for list of successful bookings.
+  
 
     // Creating room objects and adding all rooms to uniRooms array.
     Room taff = new Room("Taff", 8);
@@ -56,11 +57,11 @@ public class Main {
             Booking.createBooking(uniRooms, confirmedBookings);
             break;
           case 2:
-          //Runs method to view list of all rooms
+          //Runs method to view list of all rooms.
             Room.viewAllRooms(uniRooms);
             break;
           case 3:
-          //Runs method to search bookings by name and return
+          //Runs method to search bookings by name and return bookings.
             Booking.returnBookings(confirmedBookings);
             break;
           }
