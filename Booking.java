@@ -1,17 +1,8 @@
-import java.util.Arrays;
-import java.io.BufferedReader;
-import java.io.IOException;
+
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
 import java.time.format.DateTimeParseException;
 import java.time.LocalTime;
 
@@ -22,7 +13,6 @@ public class Booking {
   private String time;
   private String personName;
   private int groupSize;
-  int x;
 
   public String getRoomName() {
     return room;
@@ -68,7 +58,7 @@ public class Booking {
     System.out.println("Please enter your full name in lower case with no spaces");
     Scanner input = new Scanner(System.in);
     String userInput = input.next();
-    userInput = userInput.toLowerCase();
+    userInput = userInput.toLowerCase(); //to ensure name matches the names stored in confirmedBookings which are in lowercase.
 
     System.out.println("If you have any bookings, they will be listed below:");
     for (x = 0; x < bookingArray.size(); x++) {
@@ -113,15 +103,12 @@ public class Booking {
       // Taking date requirement.
       boolean dateIsValid = false;
       while (!dateIsValid) {
-        System.out.println("Please enter a valid date in the format dd/mm/yy");
+        System.out.println("Please enter a valid date in the format dd/mm/yyyy");
         requestedDate = input.nextLine();
         try {
-          DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");
+          DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
           LocalDate localDate = LocalDate.parse(requestedDate, dtf);
-          System.out.println("Input String with value: " + requestedDate);
-          System.out.println("Converted Date in default ISO format: " + localDate);
           LocalDate todaysDate = LocalDate.now();
-	        System.out.println(dtf.format(todaysDate));
           if (localDate.isBefore(todaysDate)) {
             System.out.println("You can only make bookings for dates from tomorrow");
             dateIsValid = false;
@@ -139,18 +126,20 @@ public class Booking {
       boolean timeIsValid = false;
       String requestedTime = null;
       while (!timeIsValid) {
-        System.out.println(
-            "Our rooms can be booked for one hour,starting on the hour. Please enter the hour you want your meeting to start, using 24 hour format eg 1300");
+        System.out.println("Our rooms can be booked for one hour,starting on the hour.");
+        System.out.println("Please enter the hour you want your meeting to start, using 24 hour format eg 1300");
         requestedTime = input.nextLine();
 
-        // Checking time is entered correctly and catching parse exceptions:
-        
+        // Checking time is entered correctly and catching DateTimeParse exceptions:
         try {
           DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HHmm");
           LocalTime localTime = LocalTime.parse(requestedTime, dtf);
-          System.out.println("Input String with value: " + requestedTime);
-          System.out.println("Converted Time in default ISO format: " + localTime);
-          if (requestedTime.equals(dtf.format(localTime))) {
+          //checking if requestedTime starts on the hour.
+          if (localTime.getMinute() > 00){
+            System.out.println("That time is not valid because we can only start bookings on the hour");
+            timeIsValid = false;
+          }
+          else if (requestedTime.equals(dtf.format(localTime))) {
             System.out.println(requestedTime + " is a valid time");
             timeIsValid = true;
           }
@@ -159,13 +148,14 @@ public class Booking {
           timeIsValid = false;
         }
       }
-
+      
+      
       // Taking group size requirement.
       System.out.println("Please enter the number of people in your group (maximum 70)");
       int requestedGroupSize = input.nextInt();
 
-      // Checking if any rooms are big enough for group size. Printing all avaialable
-      // rooms that are big enough.
+      /*Checking if any rooms are big enough for group size. Printing all avaialable
+      rooms that are big enough or telling user there are no rooms big enough if group size is bigger than 70. */
       if (requestedGroupSize > 70) {
         System.out.println("Sorry, we dont have any rooms that are big enough for your group size.");
         takeRequirements = false;
@@ -174,12 +164,13 @@ public class Booking {
         for (x = 0; x < uniRooms.length; x++) {
 
           if ((Booking.isAvailable(uniRooms[x].getRoomName(), requestedDate, requestedTime, confirmedBookings))
-              && (requestedGroupSize <= uniRooms[x].getCapacity())) {
+                  && (requestedGroupSize <= uniRooms[x].getCapacity())) {
             System.out.println("Room Number: " + x + " " + uniRooms[x].getRoomName() + " is Available.");
           }
         }
+      }
 
-        // Taking final requirements - which room and customer name.
+        // Taking final requirements - room and customer name.
         System.out.println("Please type in the room number you would like to book:");
         String requestedRoomName = input.next();
         switch (requestedRoomName) {
@@ -223,7 +214,7 @@ public class Booking {
         System.out.println(newBooking.toString());
         takeRequirements = false;
 
+
       }
-    } // **********Need to close scanner at end of method
-  }
+    }
 }

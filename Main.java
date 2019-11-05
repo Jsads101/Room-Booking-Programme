@@ -1,9 +1,6 @@
 import java.util.Arrays;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.InputMismatchException;
 
 public class Main {
@@ -11,7 +8,7 @@ public class Main {
   public static void main(String[] args) {
 
     Room[] uniRooms = new Room[9]; //Array for list of rooms.
-    ArrayList<Booking> confirmedBookings = new ArrayList<Booking>(); // Array for list of successful bookings.
+    ArrayList<Booking> confirmedBookings = new ArrayList<Booking>(); // Array for list of successful bookings for temporary storage.
   
 
     // Creating room objects and adding all rooms to uniRooms array.
@@ -53,7 +50,7 @@ public class Main {
         if (userInput >= 1 && userInput <= 4) {
           switch (userInput) {
           case 1:
-          //Runs method to chreat a new booking
+          //Runs method to create a new booking
             Booking.createBooking(uniRooms, confirmedBookings);
             break;
           case 2:
@@ -77,11 +74,7 @@ public class Main {
         else if (nextInput == 2) {
           System.out.println("Thankyou.Exiting Programme.Goodbye");
           mainMenu = false;
-        } else {
-          System.out.println("Sorry, that is not a correct input. Returning to main menu");
-          
         }
-      
       }
       //Catching Mismatch Exception i.e. if user inputs something other than an int
     } catch (InputMismatchException e) {
