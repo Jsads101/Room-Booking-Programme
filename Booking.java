@@ -1,8 +1,17 @@
-
+import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 import java.time.format.DateTimeParseException;
 import java.time.LocalTime;
 
@@ -13,6 +22,7 @@ public class Booking {
   private String time;
   private String personName;
   private int groupSize;
+  int x;
 
   public String getRoomName() {
     return room;
@@ -47,7 +57,7 @@ public class Booking {
   // Overiding the toString() method for printing out Booking objects.
   public String toString() {
     return "Room Name: " + room + ", Date: " + date + ", Time: " + time + ", Name of Customer: " + personName
-        + ", Group Size: " + groupSize + ".";
+            + ", Group Size: " + groupSize + ".";
   }
 
   // METHOD TO RETURN BOOKINGS BY CUSTOMER NAME - method called from Main.java
@@ -58,13 +68,13 @@ public class Booking {
     System.out.println("Please enter your full name in lower case with no spaces");
     Scanner input = new Scanner(System.in);
     String userInput = input.next();
-    userInput = userInput.toLowerCase(); //to ensure name matches the names stored in confirmedBookings which are in lowercase.
+    userInput = userInput.toLowerCase();
 
     System.out.println("If you have any bookings, they will be listed below:");
     for (x = 0; x < bookingArray.size(); x++) {
       if (userInput.equals(bookingArray.get(x).getPersonName())) {
         System.out.println("Date: " + bookingArray.get(x).getDate() + ", Time: " + bookingArray.get(x).getTime()
-            + ", Room: " + bookingArray.get(x).getRoomName() + ".");
+                + ", Room: " + bookingArray.get(x).getRoomName() + ".");
         hasBooking = true;
       }
     }
@@ -76,11 +86,11 @@ public class Booking {
   // Helper Method for createBooking Method which returns whether a specific room
   // is avilable at a specific time and date.
   public static boolean isAvailable(String roomName, String requestedDate, String requestedTime,
-      ArrayList<Booking> bookingArray) {
+                                    ArrayList<Booking> bookingArray) {
     int x;
     for (x = 0; x < bookingArray.size(); x++) {
       if (roomName.equals(bookingArray.get(x).getRoomName()) && requestedDate.equals(bookingArray.get(x).getDate())
-          && requestedTime.equals(bookingArray.get(x).getTime())) {
+              && requestedTime.equals(bookingArray.get(x).getTime())) {
         return false;
       }
     }
@@ -97,9 +107,7 @@ public class Booking {
     boolean takeRequirements = true;
     Scanner input = new Scanner(System.in);
     String requestedDate = null;
-
     while (takeRequirements) {
-
       // Taking date requirement.
       boolean dateIsValid = false;
       while (!dateIsValid) {
@@ -135,11 +143,10 @@ public class Booking {
           DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HHmm");
           LocalTime localTime = LocalTime.parse(requestedTime, dtf);
           //checking if requestedTime starts on the hour.
-          if (localTime.getMinute() > 00){
+          if (localTime.getMinute() > 00) {
             System.out.println("That time is not valid because we can only start bookings on the hour");
             timeIsValid = false;
-          }
-          else if (requestedTime.equals(dtf.format(localTime))) {
+          } else if (requestedTime.equals(dtf.format(localTime))) {
             System.out.println(requestedTime + " is a valid time");
             timeIsValid = true;
           }
@@ -148,32 +155,39 @@ public class Booking {
           timeIsValid = false;
         }
       }
-      
-      
+
+      boolean groupSizeIsValid = false;
+      int requestedGroupSize = 0;
+      ArrayList<String> availableRooms = new ArrayList<String>();
       // Taking group size requirement.
-      System.out.println("Please enter the number of people in your group (maximum 70)");
-      int requestedGroupSize = input.nextInt();
+      while (!groupSizeIsValid) {
+        System.out.println("Please enter the number of people in your group (maximum 70)");
+        requestedGroupSize = input.nextInt();
 
-      /*Checking if any rooms are big enough for group size. Printing all avaialable
-      rooms that are big enough or telling user there are no rooms big enough if group size is bigger than 70. */
-      if (requestedGroupSize > 70) {
-        System.out.println("Sorry, we dont have any rooms that are big enough for your group size.");
-        takeRequirements = false;
-      } else if (requestedGroupSize <= 70) {
-        System.out.println("If we have rooms that meet your criteria they will be listed below.");
-        for (x = 0; x < uniRooms.length; x++) {
-
-          if ((Booking.isAvailable(uniRooms[x].getRoomName(), requestedDate, requestedTime, confirmedBookings))
-                  && (requestedGroupSize <= uniRooms[x].getCapacity())) {
-            System.out.println("Room Number: " + x + " " + uniRooms[x].getRoomName() + " is Available.");
+        if (requestedGroupSize > 70) {
+          System.out.println("Not big enough");
+          groupSizeIsValid = false;
+        } else {
+          for (x = 0; x < uniRooms.length; x++) {
+            if ((Booking.isAvailable(uniRooms[x].getRoomName(), requestedDate, requestedTime, confirmedBookings))
+                    && (requestedGroupSize <= uniRooms[x].getCapacity())) {
+              availableRooms.add(uniRooms[x].getRoomName());
+              groupSizeIsValid = true;
+              System.out.println("Room Number: " + x + " " + uniRooms[x].getRoomName() + " is Available.");
+            }
           }
+
         }
       }
+      if (availableRooms.isEmpty()) {
+        System.out.println("No rooms");
+      takeRequirements = false;
+      }
 
-        // Taking final requirements - room and customer name.
-        System.out.println("Please type in the room number you would like to book:");
-        String requestedRoomName = input.next();
-        switch (requestedRoomName) {
+      // Taking final requirements - which room and customer name.
+      System.out.println("Please type in the room number you would like to book:");
+      String requestedRoomName = input.next();
+      switch (requestedRoomName) {
         case "0":
           requestedRoomName = "Taff";
           break;
@@ -200,21 +214,23 @@ public class Booking {
           break;
         case "8":
           requestedRoomName = "Snowdon";
-        }
-        System.out.println("Finally, please enter your full name in lowercase with no spaces.");
-        String customerName = input.next();
-        customerName = customerName.toLowerCase();
-
-        // Creates new Booking object from customer requirements and prints out to
-        // customer.
-        Booking newBooking = new Booking(requestedRoomName, requestedDate, requestedTime, customerName,
-            requestedGroupSize);
-        confirmedBookings.add(newBooking); // Adds new Booking object to confirmedBookings array.
-        System.out.println("Thankyou for your booking. Your booking details are confirmed below:");
-        System.out.println(newBooking.toString());
-        takeRequirements = false;
-
-
       }
+      System.out.println("Finally, please enter your full name in lowercase with no spaces.");
+      String customerName = input.next();
+      customerName = customerName.toLowerCase();
+
+      // Creates new Booking object from customer requirements and prints out to
+      // customer.
+      Booking newBooking = new Booking(requestedRoomName, requestedDate, requestedTime, customerName,
+              requestedGroupSize);
+      confirmedBookings.add(newBooking); // Adds new Booking object to confirmedBookings array.
+      System.out.println("Thankyou for your booking. Your booking details are confirmed below:");
+      System.out.println(newBooking.toString());
+      takeRequirements = false;
+
+
     }
+  }
 }
+
+
