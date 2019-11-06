@@ -1,17 +1,8 @@
 import java.util.Arrays;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
 import java.time.format.DateTimeParseException;
 import java.time.LocalTime;
 
@@ -60,7 +51,8 @@ public class Booking {
             + ", Group Size: " + groupSize + ".";
   }
 
-  // METHOD TO RETURN BOOKINGS BY CUSTOMER NAME - method called from Main.java
+
+  // METHOD TO RETURN BOOKINGS BY CUSTOMER NAME - method called from Main BOoking Programme
   public static void returnBookings(ArrayList<Booking> bookingArray) {
     int x;
     boolean hasBooking = false;
@@ -83,8 +75,8 @@ public class Booking {
     }
   }
 
-  // Helper Method for createBooking Method which returns whether a specific room
-  // is avilable at a specific time and date.
+
+  // Helper Method (for createBooking Method) which returns whether a specific room is avilable at a specific time and date.
   public static boolean isAvailable(String roomName, String requestedDate, String requestedTime,
                                     ArrayList<Booking> bookingArray) {
     int x;
@@ -98,27 +90,35 @@ public class Booking {
   }
 
   /*
-   * Method which takes in user criteria, provides a list of available rooms and
-   * allows user to chose a room to make a booking. Booking is then added to
-   * confirmedBooking ArrayList for temporary storage.
+   * Method which takes in user criteria, provides a list of available rooms and allows user to chose a room to make
+   * a booking. Booking is then added to confirmedBooking ArrayList for temporary storage.
    */
   public static void createBooking(Room[] uniRooms, ArrayList<Booking> confirmedBookings) {
+    //declaring all variables needed for method.
     int x;
-    boolean takeRequirements = true;
     Scanner input = new Scanner(System.in);
     String requestedDate = null;
-    while (takeRequirements) {
-      // Taking date requirement.
-      boolean dateIsValid = false;
+    String requestedTime = null;
+    int requestedGroupSize = 0;
+    boolean takeFinalRequirements = true;
+    boolean dateIsValid = false;
+    boolean timeIsValid = false;
+    boolean groupSizeIsValid = false;
+    ArrayList<String> availableRooms = new ArrayList<String>();
+
+
+      // Taking date requirement from customer.
       while (!dateIsValid) {
         System.out.println("Please enter a valid date in the format dd/mm/yyyy");
         requestedDate = input.nextLine();
+
+        //checking date is entered correctly and catching parse exceptions.
         try {
           DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
           LocalDate localDate = LocalDate.parse(requestedDate, dtf);
           LocalDate todaysDate = LocalDate.now();
           if (localDate.isBefore(todaysDate)) {
-            System.out.println("You can only make bookings for dates from tomorrow");
+            System.out.println("You can only make bookings for dates from tomorrow. Please try again.");
             dateIsValid = false;
           } else if (requestedDate.equals(dtf.format(localDate))) {
             System.out.println(requestedDate + " is a valid date");
@@ -130,9 +130,7 @@ public class Booking {
         }
       }
 
-      // Taking time requirement.
-      boolean timeIsValid = false;
-      String requestedTime = null;
+      // Taking time requirement from customer.
       while (!timeIsValid) {
         System.out.println("Our rooms can be booked for one hour,starting on the hour.");
         System.out.println("Please enter the hour you want your meeting to start, using 24 hour format eg 1300");
@@ -156,80 +154,73 @@ public class Booking {
         }
       }
 
-      boolean groupSizeIsValid = false;
-      int requestedGroupSize = 0;
-      ArrayList<String> availableRooms = new ArrayList<String>();
-      // Taking group size requirement.
-      while (!groupSizeIsValid) {
+      // Taking group size requirement from customer.
         System.out.println("Please enter the number of people in your group (maximum 70)");
         requestedGroupSize = input.nextInt();
 
-        if (requestedGroupSize > 70) {
-          System.out.println("Not big enough");
-          groupSizeIsValid = false;
-        } else {
+        if (requestedGroupSize > 70){
+          System.out.println("Sorry, we do not have any rooms with a large enough capacity for your group size");
+          takeFinalRequirements = false;
+        }
+        //Checking availablity and capacity before printing list of available rooms to customer.
+        else if (requestedGroupSize <= 70){
           for (x = 0; x < uniRooms.length; x++) {
             if ((Booking.isAvailable(uniRooms[x].getRoomName(), requestedDate, requestedTime, confirmedBookings))
                     && (requestedGroupSize <= uniRooms[x].getCapacity())) {
-              availableRooms.add(uniRooms[x].getRoomName());
-              groupSizeIsValid = true;
               System.out.println("Room Number: " + x + " " + uniRooms[x].getRoomName() + " is Available.");
+              availableRooms.add(uniRooms[x].getRoomName());
             }
+            //Telling customer if all suitable rooms have already been booked.
+          }if (availableRooms.isEmpty()) {
+            System.out.println("We're sorry, we have no rooms available which fit your criteria");
+            takeFinalRequirements = false;
           }
-
         }
+
+      // Taking final requirements from customer- which room and customer name.
+      while (takeFinalRequirements) {
+        System.out.println("Please type in the room number you would like to book:");
+        String requestedRoomName = input.next();
+        switch (requestedRoomName) {
+          case "0":
+            requestedRoomName = "Taff";
+            break;
+          case "1":
+            requestedRoomName = "Llangorse";
+            break;
+          case "2":
+            requestedRoomName = "Pen Y Fan";
+            break;
+          case "3":
+            requestedRoomName = "Usk";
+            break;
+          case "4":
+            requestedRoomName = "Bala";
+            break;
+          case "5":
+            requestedRoomName = "Cadair Idris";
+            break;
+          case "6":
+            requestedRoomName = "Wye";
+            break;
+          case "7":
+            requestedRoomName = "Gower";
+            break;
+          case "8":
+            requestedRoomName = "Snowdon";
+        }
+        System.out.println("Finally, please enter your full name in lowercase with no spaces.");
+        String customerName = input.next();
+        customerName = customerName.toLowerCase();
+
+        // Creates new Booking object from customer requirements and prints out to customer.
+        Booking newBooking = new Booking(requestedRoomName, requestedDate, requestedTime, customerName,
+                requestedGroupSize);
+        confirmedBookings.add(newBooking); // Adds new Booking object to confirmedBookings array.
+        System.out.println("Thankyou for your booking. Your booking details are confirmed below:");
+        System.out.println(newBooking.toString());
+        takeFinalRequirements = false;
       }
-      if (availableRooms.isEmpty()) {
-        System.out.println("No rooms");
-      takeRequirements = false;
-      }
-
-      // Taking final requirements - which room and customer name.
-      System.out.println("Please type in the room number you would like to book:");
-      String requestedRoomName = input.next();
-      switch (requestedRoomName) {
-        case "0":
-          requestedRoomName = "Taff";
-          break;
-        case "1":
-          requestedRoomName = "Llangorse";
-          break;
-        case "2":
-          requestedRoomName = "Pen Y Fan";
-          break;
-        case "3":
-          requestedRoomName = "Usk";
-          break;
-        case "4":
-          requestedRoomName = "Bala";
-          break;
-        case "5":
-          requestedRoomName = "Cadair Idris";
-          break;
-        case "6":
-          requestedRoomName = "Wye";
-          break;
-        case "7":
-          requestedRoomName = "Gower";
-          break;
-        case "8":
-          requestedRoomName = "Snowdon";
-      }
-      System.out.println("Finally, please enter your full name in lowercase with no spaces.");
-      String customerName = input.next();
-      customerName = customerName.toLowerCase();
-
-      // Creates new Booking object from customer requirements and prints out to
-      // customer.
-      Booking newBooking = new Booking(requestedRoomName, requestedDate, requestedTime, customerName,
-              requestedGroupSize);
-      confirmedBookings.add(newBooking); // Adds new Booking object to confirmedBookings array.
-      System.out.println("Thankyou for your booking. Your booking details are confirmed below:");
-      System.out.println(newBooking.toString());
-      takeRequirements = false;
-
-
-    }
   }
 }
 
